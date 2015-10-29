@@ -21,12 +21,12 @@ public class SyntaxTree extends Tree<SyntaxTree> {
 	}
 
 	@Override
-	protected SyntaxTree newInstance(Symbol tag, Source source, long pos, int len, int objectsize, Object value) {
+	public SyntaxTree newInstance(Symbol tag, Source source, long pos, int len, int objectsize, Object value) {
 		return new SyntaxTree(tag, source, pos, len, objectsize, value);
 	}
 
 	@Override
-	protected void link(int n, Symbol label, Object child) {
+	public void link(int n, Symbol label, Object child) {
 		this.set(n, label, (SyntaxTree) child);
 	}
 

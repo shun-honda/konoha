@@ -9,7 +9,7 @@ import java.util.Map;
 
 import konoha.main.ConsoleUtils;
 import konoha.script.TypeSystem;
-import nez.main.Verbose;
+import nez.Verbose;
 
 /**
  * used for user defined class loading. not thread safe.

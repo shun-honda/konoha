@@ -8,6 +8,7 @@ import konoha.message.Message;
 import konoha.syntax.ScriptContextHacks;
 import nez.Parser;
 import nez.io.SourceContext;
+import nez.lang.GrammarFile;
 
 public class ScriptContext extends ScriptContextHacks {
 
@@ -24,12 +25,12 @@ public class ScriptContext extends ScriptContextHacks {
 		this.getTypeSystem().setShellMode(b);
 	}
 
-	public final void load(String path) throws IOException {
-		eval(SourceContext.newFileContext(path));
+	public final void load(String path, GrammarFile g) throws IOException {
+		eval(SourceContext.newFileContext(path), g);
 	}
 
-	public final Object eval(String uri, int linenum, String script) {
-		return eval(SourceContext.newStringContext(uri, linenum, script));
+	public final Object eval(String uri, int linenum, String script, GrammarFile g) {
+		return eval(SourceContext.newStringContext(uri, linenum, script), g);
 	}
 
 	ScriptContextError found = ScriptContextError.NoError;
@@ -42,7 +43,7 @@ public class ScriptContext extends ScriptContextHacks {
 		found = e;
 	}
 
-	public final Object eval(SourceContext source) {
+	public final Object eval(SourceContext source, GrammarFile g) {
 		this.found = ScriptContextError.NoError;
 		SyntaxTree node = (SyntaxTree) this.getParser().parse(source, new SyntaxTree());
 		if (node == null) {
@@ -53,6 +54,7 @@ public class ScriptContext extends ScriptContextHacks {
 		if (!node.is(CommonSymbols._Source)) {
 			node = node.newInstance(CommonSymbols._Source, node);
 		}
+		g.desugarTree(node);
 		return evalSource(node);
 	}
 

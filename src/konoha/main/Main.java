@@ -13,6 +13,7 @@ import konoha.script.EmptyResult;
 import konoha.script.ScriptContext;
 import konoha.script.ScriptContextError;
 import konoha.script.ScriptRuntimeException;
+import nez.lang.GrammarFile;
 import nez.main.CommandContext;
 import nez.util.StringUtils;
 
@@ -38,7 +39,7 @@ public class Main {
 		if (config.hasInput()) {
 			try {
 				while (config.hasInput()) {
-					sc.eval(config.nextInput());
+					sc.eval(config.nextInput(), (GrammarFile) config.newGrammar());
 				}
 			} catch (AssertionError e) {
 				e.printStackTrace();
@@ -52,7 +53,7 @@ public class Main {
 			}
 		} else {
 			show(config);
-			shell(sc);
+			shell(sc, config);
 		}
 	}
 
@@ -67,7 +68,7 @@ public class Main {
 
 	private static void show(CommandContext config) {
 		ConsoleUtils.bold();
-		ConsoleUtils.println("Konoha " + Version + " U(" + config.newGrammar().getDesc() + ") on Nez " + nez.main.Command.Version);
+		ConsoleUtils.println("Konoha " + Version + " U(" + config.newGrammar().getDesc() + ") on Nez " + nez.main.Command.MajorVersion);
 		ConsoleUtils.end();
 		ConsoleUtils.println(Copyright);
 		ConsoleUtils.println("Copyright (c) 2015, Kimio Kuramitsu, Yokohama National University");
@@ -76,7 +77,7 @@ public class Main {
 		ConsoleUtils.end();
 	}
 
-	public static void shell(ScriptContext sc) throws IOException {
+	public static void shell(ScriptContext sc, CommandContext config) throws IOException {
 		sc.setShellMode(true);
 		ConsoleReader console = new ConsoleReader();
 		console.setHistoryEnabled(true);
@@ -96,7 +97,7 @@ public class Main {
 
 			try {
 				ConsoleUtils.begin(32);
-				Object result = sc.eval("<stdio>", linenum, command);
+				Object result = sc.eval("<stdio>", linenum, command, (GrammarFile) config.newGrammar());
 				ConsoleUtils.end();
 				if (!(result instanceof EmptyResult)) {
 					ConsoleUtils.begin(37);
